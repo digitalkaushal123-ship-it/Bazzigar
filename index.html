@@ -113,6 +113,18 @@
             animation: float 6s ease-in-out infinite;
         }
     </style>
+    <!-- Meta Pixel base code: initialize only; no PageView event -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1351302446502434');
+    </script>
 </head>
 <body class="min-h-full flex flex-col items-center justify-center p-4 sm:p-6 relative cinematic-bg">
 
@@ -186,7 +198,7 @@
         </div>
 
         <!-- JOIN TELEGRAM Button -->
-        <a href="https://t.me/+UeOS0363gdE0Zjg1" target="_blank" class="w-full gold-gradient-btn text-black font-black text-base sm:text-lg py-4 px-6 rounded-2xl shadow-2xl flex items-center justify-center gap-3.5 mb-6 group cursor-pointer">
+        <a href="https://t.me/+UeOS0363gdE0Zjg1" onclick="if (window.fbq) fbq('trackCustom', 'TelegramJoinClick');" target="_blank" class="w-full gold-gradient-btn text-black font-black text-base sm:text-lg py-4 px-6 rounded-2xl shadow-2xl flex items-center justify-center gap-3.5 mb-6 group cursor-pointer">
             <i class="fa-brands fa-telegram text-2xl group-hover:scale-110 transition-transform"></i>
             <span class="tracking-wider">JOIN TELEGRAM</span>
         </a>

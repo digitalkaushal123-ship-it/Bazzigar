@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAZZIGAR - King of Cricket</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Cinzel & Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        gold: {
+                            light: '#FCEAB7',
+                            DEFAULT: '#DFB130',
+                            dark: '#9A7311',
+                            accent: '#FFD700',
+                        },
+                        darkBg: '#030303',
+                        cardBg: '#0B0B0C',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #030303;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Cinematic background vignette and golden rays */
+        .cinematic-bg {
+            background: radial-gradient(circle at 50% 25%, rgba(223, 177, 48, 0.12) 0%, rgba(5, 5, 5, 0.95) 70%, #030303 100%);
+        }
+
+        /* Luxury gold gradient text */
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF8DC 0%, #DFB130 50%, #9A7311 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(223, 177, 48, 0.3));
+        }
+
+        /* Premium button gradient & cinematic glow */
+        .gold-gradient-btn {
+            background: linear-gradient(135deg, #FCEAB7 0%, #DFB130 50%, #9A7311 100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .gold-gradient-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.7s ease-in-out;
+        }
+        .gold-gradient-btn:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+        .gold-gradient-btn:hover {
+            box-shadow: 0 0 35px rgba(223, 177, 48, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+        }
+
+        /* Glowing card border */
+        .cinematic-card {
+            background: linear-gradient(145deg, rgba(15, 15, 16, 0.9) 0%, rgba(8, 8, 8, 0.95) 100%);
+            border: 1px solid rgba(223, 177, 48, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(223, 177, 48, 0.08);
+        }
+        .cinematic-card:hover {
+            border-color: rgba(223, 177, 48, 0.5);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(223, 177, 48, 0.15);
+        }
+
+        /* Pulsing live dot */
+        @keyframes pulse-glow {
+            0% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); opacity: 0.8; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .live-dot {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Floating particles */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-15px) rotate(180deg); opacity: 0.8; }
+        }
+        .particle {
+            position: absolute;
+            background: #DFB130;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col items-center justify-center p-4 sm:p-6 relative cinematic-bg">
+
+    <!-- Cinematic Background Shimmer Particles -->
+    <div class="particle w-1.5 h-1.5 top-12 left-1/4" style="animation-delay: 0s;"></div>
+    <div class="particle w-2 h-2 top-1/3 right-1/5" style="animation-delay: 2s;"></div>
+    <div class="particle w-1 h-1 bottom-1/4 left-1/5" style="animation-delay: 4s;"></div>
+    <div class="particle w-2 h-2 bottom-12 right-1/4" style="animation-delay: 1s;"></div>
+
+    <!-- Ambient Golden Glow behind card -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-tr from-gold/10 to-transparent rounded-full pointer-events-none blur-3xl"></div>
+
+    <!-- Main Cinematic Card Container -->
+    <div class="w-full max-w-md cinematic-card rounded-[2.5rem] p-7 sm:p-9 flex flex-col items-center text-center relative z-10 my-auto backdrop-blur-2xl">
+
+        <!-- Cinematic Emblem / Logo Seal with Cricket Bat Icon -->
+        <div class="relative w-44 h-44 sm:w-52 sm:h-52 mb-6 flex items-center justify-center">
+            <!-- Outer rotating golden rings -->
+            <div class="absolute inset-0 rounded-full border border-gold/30 animate-spin" style="animation-duration: 25s;"></div>
+            <div class="absolute inset-3 rounded-full border border-dashed border-gold/50 animate-spin" style="animation-direction: reverse; animation-duration: 30s;"></div>
+            
+            <!-- Core badge box -->
+            <div class="absolute inset-6 rounded-full bg-gradient-to-b from-neutral-900 via-neutral-950 to-black border border-gold/40 flex flex-col items-center justify-center p-4 shadow-[inset_0_0_20px_rgba(223,177,48,0.2)]">
+                <!-- Cricket icon with gold aura -->
+                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-gold/20 to-gold/5 border border-gold/60 flex items-center justify-center mb-2.5 text-gold shadow-[0_0_20px_rgba(223,177,48,0.5)]">
+                    <i class="fa-solid fa-baseball text-2xl"></i>
+                </div>
+
+                <!-- Bazzigar Ribbon -->
+                <div class="bg-gradient-to-r from-gold-dark via-gold to-gold-dark text-black font-serif font-black text-xs sm:text-sm tracking-widest px-3.5 py-1.5 rounded shadow-lg w-full uppercase">
+                    BAZZIGAR
+                </div>
+                <span class="text-[9px] tracking-[0.2em] text-gold/90 uppercase font-bold mt-1.5">KING OF CRICKET</span>
+            </div>
+        </div>
+
+        <!-- Live Now Badge -->
+        <div class="inline-flex items-center gap-2 bg-neutral-950/90 border border-gold/40 px-4 py-1.5 rounded-full mb-5 shadow-lg">
+            <span class="w-2.5 h-2.5 rounded-full bg-green-500 live-dot inline-block"></span>
+            <span class="text-xs sm:text-sm font-bold tracking-widest uppercase text-gold-light">LIVE NOW</span>
+        </div>
+
+        <!-- Heading Title -->
+        <h1 class="text-3xl sm:text-4xl font-serif font-black tracking-wider gold-gradient-text mb-2">
+            BAZZIGAR
+        </h1>
+
+        <!-- Active Members Counter -->
+        <p class="text-neutral-300 text-sm sm:text-base font-medium mb-6 flex items-center justify-center gap-1.5">
+            <span class="text-gold font-bold text-lg">70,309+</span> active members
+        </p>
+
+        <!-- Features Check List -->
+        <div class="flex items-center justify-center gap-6 mb-7 w-full text-xs sm:text-sm font-semibold">
+            <div class="flex items-center gap-2 text-neutral-200">
+                <i class="fa-solid fa-circle-check text-gold text-base"></i>
+                <span>100% Free</span>
+            </div>
+            <div class="flex items-center gap-2 text-neutral-200">
+                <i class="fa-solid fa-bolt text-gold text-base"></i>
+                <span>Instant Access</span>
+            </div>
+        </div>
+
+        <!-- Limited Seats Countdown Timer Box -->
+        <div class="w-full bg-neutral-950/80 border border-gold/30 rounded-2xl py-3.5 px-5 mb-6 flex items-center justify-between shadow-inner">
+            <span class="text-xs sm:text-sm font-semibold text-neutral-400 uppercase tracking-wider">LIMITED SEATS:</span>
+            <span id="countdownTimer" class="text-sm sm:text-base font-serif font-bold text-gold tracking-widest uppercase">
+                14:31
+            </span>
+        </div>
+
+        <!-- JOIN TELEGRAM Button -->
+        <a href="https://telegram.org" target="_blank" class="w-full gold-gradient-btn text-black font-black text-base sm:text-lg py-4 px-6 rounded-2xl shadow-2xl flex items-center justify-center gap-3.5 mb-6 group cursor-pointer">
+            <i class="fa-brands fa-telegram text-2xl group-hover:scale-110 transition-transform"></i>
+            <span class="tracking-wider">JOIN TELEGRAM</span>
+        </a>
+
+        <!-- Verified Safe Footer Tag -->
+        <div class="flex items-center justify-center gap-2 text-xs text-gold/90 font-medium pt-3 border-t border-neutral-800/80 w-full tracking-wide">
+            <i class="fa-solid fa-shield-halved text-gold"></i> Verified Safe & Secure VIP Channel
+        </div>
+
+    </div>
+
+    <!-- Footer Copyright -->
+    <footer class="mt-6 text-center text-xs text-neutral-500 z-10 tracking-widest uppercase font-semibold">
+        &copy; 2026 Bazzigar Official. All rights reserved.
+    </footer>
+
+    <!-- Interactive Live Countdown Script -->
+    <script>
+        let totalSeconds = 14 * 60 + 31;
+        const timerDisplay = document.getElementById('countdownTimer');
+
+        setInterval(() => {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>

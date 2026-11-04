@@ -2,6 +2,53 @@ const crypto = require("crypto");
 
 module.exports = async function handler(req, res) {
   if (req.method === "GET") {
+    // One-time protected setup action: register this endpoint with Telegram.
+    if (req.query && req.query.setup) {
+      const setupKey = process.env.TELEGRAM_WEBHOOK_SETUP_KEY;
+      if (!setupKey || req.query.setup !== setupKey) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const webhookSecret = process.env.TELEGRAM_WEBHOOK_SECRET;
+      if (!botToken || !webhookSecret) {
+        return res.status(500).json({
+          ok: false,
+          error: "Missing Telegram bot token or webhook secret"
+        });
+      }
+
+      try {
+        const webhookUrl = "https://bazzigar-sigma.vercel.app/api/telegram-webhook";
+        const telegramResponse = await fetch(
+          `https://api.telegram.org/bot${botToken}/setWebhook`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              url: webhookUrl,
+              secret_token: webhookSecret,
+              allowed_updates: ["chat_join_request"],
+              drop_pending_updates: false
+            })
+          }
+        );
+        const telegramResult = await telegramResponse.json();
+        if (!telegramResponse.ok || !telegramResult.ok) {
+          console.error("Telegram setWebhook failed", telegramResult);
+          return res.status(502).json({ ok: false, telegram: telegramResult });
+        }
+        return res.status(200).json({
+          ok: true,
+          webhook_registered: true,
+          allowed_updates: ["chat_join_request"]
+        });
+      } catch (error) {
+        console.error("Telegram webhook registration failed", error);
+        return res.status(502).json({ ok: false, error: "Telegram webhook registration failed" });
+      }
+    }
+
     return res.status(200).json({
       status: "active",
       service: "Bazzigar Telegram Join Request Webhook"

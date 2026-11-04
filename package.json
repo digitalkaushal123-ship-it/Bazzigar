@@ -1,0 +1,7 @@
+{
+  "name": "bazzigar-telegram-join-tracking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram channel join-request tracking for Meta Conversions API on Vercel",
+  "scripts": { "register:webhook": "node scripts/register-telegram-webhook.cjs" }
+}

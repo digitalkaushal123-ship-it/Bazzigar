@@ -4,7 +4,7 @@ module.exports = async function handler(req, res) {
   if (req.method === "GET") {
     return res.status(200).json({
       status: "active",
-      service: "Bazzigar Telegram Webhook"
+      service: "Bazzigar Telegram Join Request Webhook"
     });
   }
 
@@ -20,55 +20,73 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const update = req.body;
+    const update = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
-    if (!update.chat_join_request) {
+    // Ignore messages, channel posts, and all updates except a real join request.
+    if (!update || !update.chat_join_request) {
       return res.status(200).json({ ok: true, ignored: true });
     }
 
-    const request = update.chat_join_request;
+    const joinRequest = update.chat_join_request;
     const channelId = process.env.TELEGRAM_CHAT_ID;
 
-    if (
-      channelId &&
-      String(request.chat.id) !== String(channelId)
-    ) {
+    // Optional channel allow-list. Add TELEGRAM_CHAT_ID after we identify it
+    // from the first verified request in the Vercel runtime logs.
+    if (channelId && String(joinRequest.chat.id) !== String(channelId)) {
       return res.status(200).json({ ok: true, ignored: true });
     }
+
+    console.log("Bazzigar join request received", {
+      updateId: update.update_id,
+      chatId: joinRequest.chat.id,
+      chatTitle: joinRequest.chat.title,
+      userId: joinRequest.from && joinRequest.from.id
+    });
 
     const pixelId = process.env.META_PIXEL_ID;
     const accessToken = process.env.META_ACCESS_TOKEN;
 
+    // Acknowledge Telegram without retrying while Meta credentials are not set.
     if (!pixelId || !accessToken) {
-      console.error("Meta Pixel credentials missing");
-      return res.status(500).json({ error: "Meta not configured" });
+      console.warn("Join request received; Meta CAPI credentials are not configured yet.");
+      return res.status(200).json({
+        ok: true,
+        received: true,
+        tracked: false,
+        reason: "Meta CAPI is not configured"
+      });
     }
 
-    const eventId = `telegram_join_${update.update_id}`;
+    if (!joinRequest.from || !joinRequest.from.id) {
+      return res.status(200).json({ ok: true, ignored: true });
+    }
 
+    const eventId = `telegram_join_request_${update.update_id}`;
     const externalId = crypto
       .createHash("sha256")
-      .update(String(request.from.id))
+      .update(String(joinRequest.from.id))
       .digest("hex");
 
     const event = {
       event_name: "TelegramJoinRequest",
-      event_time: Math.floor(Date.now() / 1000),
+      event_time: Number(joinRequest.date) || Math.floor(Date.now() / 1000),
       event_id: eventId,
-      action_source: "website",
-      event_source_url: process.env.LANDING_PAGE_URL,
+      action_source: "chat",
       user_data: {
-        external_id: externalId
+        external_id: [externalId]
+      },
+      custom_data: {
+        channel_name: joinRequest.chat.title || "Bazzigar",
+        channel_id: String(joinRequest.chat.id)
       }
     };
 
-    const response = await fetch(
-      `https://graph.facebook.com/${process.env.META_API_VERSION || "v23.0"}/${pixelId}/events`,
+    const graphVersion = process.env.META_API_VERSION || "v23.0";
+    const metaResponse = await fetch(
+      `https://graph.facebook.com/${graphVersion}/${pixelId}/events`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           data: [event],
           access_token: accessToken,
@@ -79,23 +97,26 @@ module.exports = async function handler(req, res) {
       }
     );
 
-    const result = await response.json();
+    const metaResult = await metaResponse.json();
 
-    if (!response.ok) {
-      console.error("Meta API error:", result);
-      return res.status(502).json({ error: "Meta event failed" });
+    if (!metaResponse.ok) {
+      console.error("Meta Conversions API error", metaResult);
+      return res.status(502).json({ error: "Meta event delivery failed" });
     }
 
-    console.log("Telegram Join Request tracked:", eventId);
+    console.log("Meta TelegramJoinRequest accepted", {
+      eventId,
+      eventsReceived: metaResult.events_received
+    });
 
     return res.status(200).json({
       ok: true,
+      received: true,
       tracked: true,
       event_id: eventId
     });
-
   } catch (error) {
-    console.error("Webhook error:", error);
+    console.error("Telegram webhook processing error", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
